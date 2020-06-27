@@ -11,7 +11,7 @@
   });
 </script>
 
-<table>
+<table class="uk-table uk-table-striped">
   <thead>
     <th>Shows</th>
     <th>Rating</th>
