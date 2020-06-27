@@ -39,36 +39,44 @@
   });
 </script>
 
-<table class="uk-table uk-table-striped">
-  <thead>
-    <th>Shows</th>
-    <th>Rating</th>
-  </thead>
-  <tbody>
-    {#each $shows as show}
-      <tr>
-        <td>
-          {#if show.details && show.details.Poster}
-            <img src={show.details.Poster} alt="Poster for {show.title}">
-          {/if}
-          {show.title}
-        </td>
-        <td>
-          <div class="personal-rating">{show.rating}</div>
-          {#if show.details && show.details.Ratings}
-            {#if !show.details.Ratings}
-              {show.details}
+<div class="container">
+  <div>
+    <a class="uk-button uk-button-default"
+       href="https://docs.google.com/spreadsheets/d/{showsSSId}">
+      Edit
+    </a>
+  </div>
+  <table class="uk-table uk-table-striped">
+    <thead>
+      <th>Shows</th>
+      <th>Rating</th>
+    </thead>
+    <tbody>
+      {#each $shows as show}
+        <tr>
+          <td>
+            {#if show.details && show.details.Poster}
+              <img src={show.details.Poster} alt="Poster for {show.title}">
             {/if}
-            <div>(IMDB: {show.details.Ratings[0].Value})</div>
-          {/if}
-        </td>
-      </tr>
-    {/each}
-  </tbody>
-</table>
+            {show.title}
+          </td>
+          <td>
+            <div class="personal-rating">{show.rating}</div>
+            {#if show.details && show.details.Ratings}
+              {#if !show.details.Ratings}
+                {show.details}
+              {/if}
+              <div>(IMDB: {show.details.Ratings[0].Value})</div>
+            {/if}
+          </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>
 
 <style>
-  table {
+  .container {
     margin: 2em auto;
     width: 90%;
   }
