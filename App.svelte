@@ -22,7 +22,7 @@
   onMount(async () => {
     const resp = await fetch(`${API_URL}/${showsSSId}`).then(r => r.json())
     // first row is the title, ignore it
-    shows.update(n => n.concat(resp.sheets[0].rowData.slice(1).map(getShowFromRow)).sort((showA, showB) => {
+    shows.update(n => n.concat(resp.sheets[0].rows.slice(1).map(getShowFromRow)).sort((showA, showB) => {
       // sort from high to low
       return showB.rating - showA.rating;
     }))
