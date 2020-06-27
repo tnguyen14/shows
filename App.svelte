@@ -45,7 +45,7 @@
       <tr>
         <td>
           {#if show.details && show.details.Poster}
-            <img src={show.details.Poster}>
+            <img src={show.details.Poster} alt="Poster for {show.title}">
           {/if}
           {show.title}
         </td>
@@ -55,3 +55,9 @@
   </tbody>
 </table>
 
+<style>
+  td img {
+    max-width: 5em;
+    padding-right: 2em;
+  }
+</style>
