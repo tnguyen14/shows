@@ -12,7 +12,7 @@
   }
 
   async function getShowDetails(title) {
-    const response = await fetch(`https://omdbapi.com/?apikey=1bc0d27b&type=series&t=${encodeURIComponent(title)}`).then(r => r.json())
+    const response = await fetch(`${THIRDPARTY_API_URL}/omdb?type=series&title=${encodeURIComponent(title)}`).then(r => r.json())
     if (response.Response == "False") {
       return;
     }
@@ -20,7 +20,7 @@
   }
 
   onMount(async () => {
-    const resp = await fetch(`${API_URL}/${showsSSId}`).then(r => r.json())
+    const resp = await fetch(`${SHEETS_API_URL}/${showsSSId}`).then(r => r.json())
     // first row is the title, ignore it
     shows.update(n => n.concat(resp.sheets[0].rows.slice(1).map(getShowFromRow)).sort((showA, showB) => {
       // sort from high to low
