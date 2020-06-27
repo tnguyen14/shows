@@ -11,6 +11,11 @@
     }
   }
 
+  async function getShowDetails(title) {
+    const response = await fetch(`https://omdbapi.com/?apikey=1bc0d27b&type=series&t=${encodeURIComponent(title)}`).then(r => r.json())
+    return response;
+  }
+
   onMount(async () => {
     const resp = await fetch(`${API_URL}/${showsSSId}`).then(r => r.json())
     // first row is the title, ignore it
@@ -18,6 +23,15 @@
       // sort from high to low
       return showB.rating - showA.rating;
     }))
+
+    $shows.forEach((show, index) => {
+      getShowDetails(show.title).then(details => {
+        shows.update(n => {
+          n[index].details = details;
+          return n;
+        })
+      })
+    })
   });
 </script>
 
@@ -29,9 +43,15 @@
   <tbody>
     {#each $shows as show}
       <tr>
-        <td>{show.title}</td>
+        <td>
+          {#if show.details && show.details.Poster}
+            <img src={show.details.Poster}>
+          {/if}
+          {show.title}
+        </td>
         <td>{show.rating}</td>
       </tr>
     {/each}
   </tbody>
 </table>
+
