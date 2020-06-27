@@ -54,13 +54,13 @@
     <tbody>
       {#each $shows as show}
         <tr>
-          <td>
+          <td class="show">
             {#if show.details && show.details.Poster}
               <img src={show.details.Poster} alt="Poster for {show.title}">
             {/if}
             {show.title}
           </td>
-          <td>
+          <td class="rating">
             <div class="personal-rating">{show.rating}</div>
             {#if show.details && show.details.Ratings}
               {#if !show.details.Ratings}
@@ -78,10 +78,19 @@
 <style>
   .container {
     margin: 2em auto;
-    width: 90%;
+    width: 95%;
   }
-  td img {
+  .show img {
     max-width: 7em;
-    padding-right: 2em;
+    padding-right: 1em;
+    float: left;
+  }
+  @media (min-width: 48em) {
+    .container {
+      width: 80%;
+    }
+    .show img {
+      padding-right: 2em;
+    }
   }
 </style>
