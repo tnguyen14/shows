@@ -13,6 +13,9 @@
 
   async function getShowDetails(title) {
     const response = await fetch(`https://omdbapi.com/?apikey=1bc0d27b&type=series&t=${encodeURIComponent(title)}`).then(r => r.json())
+    if (response.Response == "False") {
+      return;
+    }
     return response;
   }
 
@@ -24,14 +27,15 @@
       return showB.rating - showA.rating;
     }))
 
-    $shows.forEach((show, index) => {
-      getShowDetails(show.title).then(details => {
+    for (const [index, show] of $shows.entries()) {
+      let details = await getShowDetails(show.title);
+      if (details) {
         shows.update(n => {
           n[index].details = details;
           return n;
         })
-      })
-    })
+      }
+    }
   });
 </script>
 
@@ -49,15 +53,27 @@
           {/if}
           {show.title}
         </td>
-        <td>{show.rating}</td>
+        <td>
+          <div class="personal-rating">{show.rating}</div>
+          {#if show.details && show.details.Ratings}
+            {#if !show.details.Ratings}
+              {show.details}
+            {/if}
+            <div>(IMDB: {show.details.Ratings[0].Value})</div>
+          {/if}
+        </td>
       </tr>
     {/each}
   </tbody>
 </table>
 
 <style>
+  table {
+    margin: 2em auto;
+    width: 90%;
+  }
   td img {
-    max-width: 5em;
+    max-width: 7em;
     padding-right: 2em;
   }
 </style>
