@@ -1,18 +1,22 @@
 <script>
-  import { onMount } from 'svelte';
-  import { shows } from './stores.js';
+  import { onMount } from "svelte";
+  import { shows } from "./stores.js";
 
-  const showsSSId = '1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU';
+  const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
 
   function getShowFromRow(row) {
     return {
       title: row.cells[0],
-      rating: row.cells[1]
-    }
+      rating: row.cells[1],
+    };
   }
 
   async function getShowDetails(title) {
-    const response = await fetch(`${THIRDPARTY_API_URL}/omdb?type=series&title=${encodeURIComponent(title)}`).then(r => r.json())
+    const response = await fetch(
+      `${THIRDPARTY_API_URL}/omdb?type=series&title=${encodeURIComponent(
+        title
+      )}`
+    ).then((r) => r.json());
     if (response.Response == "False") {
       return;
     }
@@ -20,20 +24,26 @@
   }
 
   onMount(async () => {
-    const resp = await fetch(`${SHEETS_API_URL}/${showsSSId}`).then(r => r.json())
+    const resp = await fetch(`${SHEETS_API_URL}/${showsSSId}`).then((r) =>
+      r.json()
+    );
     // first row is the title, ignore it
-    shows.update(n => n.concat(resp.sheets[0].rows.slice(1).map(getShowFromRow)).sort((showA, showB) => {
-      // sort from high to low
-      return showB.rating - showA.rating;
-    }))
+    shows.update((n) =>
+      n
+        .concat(resp.sheets[0].rows.slice(1).map(getShowFromRow))
+        .sort((showA, showB) => {
+          // sort from high to low
+          return showB.rating - showA.rating;
+        })
+    );
 
     for (const [index, show] of $shows.entries()) {
       let details = await getShowDetails(show.title);
       if (details) {
-        shows.update(n => {
+        shows.update((n) => {
           n[index].details = details;
           return n;
-        })
+        });
       }
     }
   });
@@ -41,8 +51,9 @@
 
 <div class="container">
   <div>
-    <a class="uk-button uk-button-default"
-       href="https://docs.google.com/spreadsheets/d/{showsSSId}">
+    <a
+      class="uk-button uk-button-default"
+      href="https://docs.google.com/spreadsheets/d/{showsSSId}">
       Edit
     </a>
   </div>
@@ -56,16 +67,14 @@
         <tr>
           <td class="show">
             {#if show.details && show.details.Poster}
-              <img src={show.details.Poster} alt="Poster for {show.title}">
+              <img src={show.details.Poster} alt="Poster for {show.title}" />
             {/if}
             {show.title}
           </td>
           <td class="rating">
             <div class="personal-rating">{show.rating}</div>
             {#if show.details && show.details.Ratings}
-              {#if !show.details.Ratings}
-                {show.details}
-              {/if}
+              {#if !show.details.Ratings}{show.details}{/if}
               <div>(IMDB: {show.details.Ratings[0].Value})</div>
             {/if}
           </td>
