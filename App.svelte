@@ -73,8 +73,7 @@
           </td>
           <td class="rating">
             <div class="personal-rating">{show.rating}</div>
-            {#if show.details && show.details.Ratings}
-              {#if !show.details.Ratings}{show.details}{/if}
+            {#if show.details && show.details.Ratings && length(show.details.Ratings)}
               <div>(IMDB: {show.details.Ratings[0].Value})</div>
             {/if}
           </td>
