@@ -1,8 +1,16 @@
 <script>
   import { onMount } from "svelte";
-  import { shows } from "./stores.js";
+  import { shows, user } from "./stores.js";
+  import { getSession } from '@tridnguyen/auth';
 
   const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
+
+  function getUserSession() {
+    const session = getSession();
+    user.set(session || {});
+  }
+
+  getUserSession();
 
   function getShowFromRow(row) {
     return {
@@ -50,13 +58,15 @@
 </script>
 
 <div class="container">
-  <div>
-    <a
-      class="uk-button uk-button-default"
-      href="https://docs.google.com/spreadsheets/d/{showsSSId}">
-      Edit
-    </a>
-  </div>
+  {#if $user.profile}
+    <div>
+      <a
+        class="uk-button uk-button-default"
+        href="https://docs.google.com/spreadsheets/d/{showsSSId}">
+        Edit
+      </a>
+    </div>
+  {/if}
   <table class="uk-table uk-table-striped">
     <thead>
       <th>Shows</th>
