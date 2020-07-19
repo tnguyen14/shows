@@ -42,7 +42,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,css,md}": "prettier --write"
+    "*.{svelte,js,css,md}": "prettier --write"
   },
   "dependencies": {
     "@tridnguyen/auth": "^5.1.0"

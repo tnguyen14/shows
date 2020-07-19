@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import { shows, user } from "./stores.js";
-  import { getSession, deleteSession, createAuth } from '@tridnguyen/auth';
+  import { getSession, deleteSession, createAuth } from "@tridnguyen/auth";
 
   const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
   const auth = createAuth();
@@ -20,7 +20,7 @@
     getUserSession();
   }
 
-  auth.handleCallback(err => {
+  auth.handleCallback((err) => {
     if (err) {
       console.error(err);
       return;
@@ -78,9 +78,19 @@
 <div class="container">
   <div>
     {#if $user.profile}
-      <button class="uk-button uk-button-default" type="button" on:click={logout}>Logout</button>
+      <button
+        class="uk-button uk-button-default"
+        type="button"
+        on:click={logout}>
+        Logout
+      </button>
     {:else}
-      <button class="uk-button uk-button-default" type="button" on:click={login}>Login</button>
+      <button
+        class="uk-button uk-button-default"
+        type="button"
+        on:click={login}>
+        Login
+      </button>
     {/if}
   </div>
   <table class="uk-table uk-table-striped">
