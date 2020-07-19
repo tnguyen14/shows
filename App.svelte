@@ -1,14 +1,32 @@
 <script>
   import { onMount } from "svelte";
   import { shows, user } from "./stores.js";
-  import { getSession } from '@tridnguyen/auth';
+  import { getSession, deleteSession, createAuth } from '@tridnguyen/auth';
 
   const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
+  const auth = createAuth();
 
   function getUserSession() {
     const session = getSession();
     user.set(session || {});
   }
+
+  function login() {
+    auth.silentAuth();
+  }
+
+  function logout() {
+    deleteSession();
+    getUserSession();
+  }
+
+  auth.handleCallback(err => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    getUserSession();
+  });
 
   getUserSession();
 
@@ -58,15 +76,13 @@
 </script>
 
 <div class="container">
-  {#if $user.profile}
-    <div>
-      <a
-        class="uk-button uk-button-default"
-        href="https://docs.google.com/spreadsheets/d/{showsSSId}">
-        Edit
-      </a>
-    </div>
-  {/if}
+  <div>
+    {#if $user.profile}
+      <button class="uk-button uk-button-default" type="button" on:click={logout}>Logout</button>
+    {:else}
+      <button class="uk-button uk-button-default" type="button" on:click={login}>Login</button>
+    {/if}
+  </div>
   <table class="uk-table uk-table-striped">
     <thead>
       <th>Shows</th>

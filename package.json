@@ -45,6 +45,6 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@tridnguyen/auth": "^3.1.0"
+    "@tridnguyen/auth": "^5.1.0"
   }
 }
