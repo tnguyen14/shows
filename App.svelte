@@ -96,6 +96,7 @@
   <table class="uk-table uk-table-striped">
     <thead>
       <th>Shows</th>
+      <th>Plot</th>
       <th>Rating</th>
     </thead>
     <tbody>
@@ -107,10 +108,12 @@
             {/if}
             {show.title}
           </td>
+          <td class="plot">
+            {#if show.details && show.details.Plot}{show.details.Plot}{/if}
+          </td>
           <td class="rating">
-            <div class="personal-rating">{show.rating}</div>
             {#if show.details && show.details.Ratings && show.details.Ratings.length}
-              <div>(IMDB: {show.details.Ratings[0].Value})</div>
+              <div>IMDB: {show.details.Ratings[0].Value}</div>
             {/if}
           </td>
         </tr>
@@ -123,6 +126,12 @@
   .container {
     margin: 2em auto;
     width: 95%;
+  }
+  .show {
+    font-size: 1.2em;
+  }
+  .plot {
+    font-size: 0.9em;
   }
   .show img {
     max-width: 7em;
