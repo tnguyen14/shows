@@ -140,6 +140,7 @@
     max-width: 7em;
     padding-right: 1em;
     float: left;
+    margin-bottom: 0.5em;
   }
   @media (min-width: 48em) {
     .container {
