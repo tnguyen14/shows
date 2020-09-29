@@ -76,7 +76,7 @@
 </script>
 
 <div class="container">
-  <div>
+  <div class="user">
     {#if $user.profile}
       <button
         class="uk-button uk-button-default"
@@ -127,8 +127,11 @@
     margin: 2em auto;
     width: 95%;
   }
+  .user {
+    display: none;
+  }
   .show {
-    font-size: 1.2em;
+    font-size: 1.15em;
   }
   .plot {
     font-size: 0.9em;
