@@ -136,6 +136,7 @@
   }
   .show {
     font-size: 1.15em;
+    min-height: 11.25rem; /* set height to prevent layout shifts when image loads */
   }
   .plot {
     font-size: 0.9em;
