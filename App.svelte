@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { shows, user } from "./stores.js";
   import { getSession, deleteSession, createAuth } from "@tridnguyen/auth";
+  import slugify from "@tridnguyen/slugify";
 
   const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
   const auth = createAuth();
@@ -33,6 +34,7 @@
   function getShowFromRow(row) {
     return {
       title: row.cells[0],
+      slug: slugify(row.cells[0]),
       rating: row.cells[1],
     };
   }
@@ -103,10 +105,12 @@
       {#each $shows as show}
         <tr>
           <td class="show">
-            {#if show.details && show.details.Poster}
-              <img src={show.details.Poster} alt="Poster for {show.title}" />
-            {/if}
-            {show.title}
+            <a href="#{show.slug}">
+              {#if show.details && show.details.Poster}
+                <img src={show.details.Poster} alt="Poster for {show.title}" />
+              {/if}
+              {show.title}
+            </a>
           </td>
           <td class="plot">
             {#if show.details && show.details.Plot}{show.details.Plot}{/if}

@@ -45,6 +45,7 @@
     "*.{svelte,js,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@tridnguyen/auth": "^5.1.0"
+    "@tridnguyen/auth": "^5.1.0",
+    "@tridnguyen/slugify": "^2.0.0"
   }
 }
