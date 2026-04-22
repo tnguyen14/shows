@@ -52,7 +52,7 @@
   }
 
   onMount(async () => {
-    const resp = await fetch(`${SHEETS_API_URL}/${showsSSId}`).then((r) =>
+    const resp = await fetch(`${SHEETS_API_URL}/public/${showsSSId}`).then((r) =>
       r.json()
     );
     // first row is the title, ignore it
