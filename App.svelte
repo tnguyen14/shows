@@ -52,9 +52,9 @@
   }
 
   onMount(async () => {
-    const resp = await fetch(`${SHEETS_API_URL}/public/${showsSSId}`).then((r) =>
-      r.json()
-    );
+    const resp = await fetch(
+      `${SHEETS_API_URL}/spreadsheets/${showsSSId}`
+    ).then((r) => r.json());
     // first row is the title, ignore it
     shows.update((n) =>
       n
