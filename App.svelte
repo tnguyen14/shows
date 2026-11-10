@@ -3,6 +3,7 @@
   import { shows, user } from "./stores.js";
   import { getSession, deleteSession, createAuth } from "@tridnguyen/auth";
   import slugify from "@tridnguyen/slugify";
+  import { SHEETS_API_URL, THIRDPARTY_API_URL } from "./config.js";
 
   const showsSSId = "1t9m4G2uujVZhq8VCrw5VQhxCjT9IVXEeV2SspyhB6cU";
   const auth = createAuth();
@@ -42,8 +43,8 @@
   async function getShowDetails(title) {
     const response = await fetch(
       `${THIRDPARTY_API_URL}/omdb?type=series&title=${encodeURIComponent(
-        title
-      )}`
+        title,
+      )}`,
     ).then((r) => r.json());
     if (response.Response == "False") {
       return;
@@ -53,7 +54,7 @@
 
   onMount(async () => {
     const resp = await fetch(
-      `${SHEETS_API_URL}/spreadsheets/${showsSSId}`
+      `${SHEETS_API_URL}/spreadsheets/${showsSSId}`,
     ).then((r) => r.json());
     // first row is the title, ignore it
     shows.update((n) =>
@@ -62,7 +63,7 @@
         .sort((showA, showB) => {
           // sort from high to low
           return showB.rating - showA.rating;
-        })
+        }),
     );
 
     for (const [index, show] of $shows.entries()) {
@@ -83,23 +84,27 @@
       <button
         class="uk-button uk-button-default"
         type="button"
-        on:click={logout}>
+        on:click={logout}
+      >
         Logout
       </button>
     {:else}
       <button
         class="uk-button uk-button-default"
         type="button"
-        on:click={login}>
+        on:click={login}
+      >
         Login
       </button>
     {/if}
   </div>
   <table class="uk-table uk-table-striped">
     <thead>
-      <th>Shows</th>
-      <th>Plot</th>
-      <th>Rating</th>
+      <tr>
+        <th>Shows</th>
+        <th>Plot</th>
+        <th>Rating</th>
+      </tr>
     </thead>
     <tbody>
       {#each $shows as show}
