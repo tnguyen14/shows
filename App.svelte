@@ -47,19 +47,27 @@
   $: list = categories[category].store;
 
   function getItemFromRow(row) {
+    // an optional trailing year, e.g. "The Fixers (2026)", picks the right
+    // title when several shows/movies share the same name
+    const [, title, year] = row.cells[0]
+      .trim()
+      .match(/^(.*?)\s*(?:\((\d{4})\))?$/);
     return {
-      title: row.cells[0],
-      slug: slugify(row.cells[0]),
+      title,
+      year,
+      slug: slugify(title),
       rating: row.cells[1],
     };
   }
 
-  async function getDetails(title, type) {
-    const response = await fetch(
-      `${THIRDPARTY_API_URL}/omdb?type=${type}&title=${encodeURIComponent(
-        title,
-      )}`,
-    ).then((r) => r.json());
+  async function getDetails({ title, year }, type) {
+    const params = new URLSearchParams({ type, title });
+    if (year) {
+      params.set("year", year);
+    }
+    const response = await fetch(`${THIRDPARTY_API_URL}/omdb?${params}`).then(
+      (r) => r.json(),
+    );
     if (response.Response == "False") {
       return;
     }
@@ -84,7 +92,7 @@
     store.set(items);
 
     for (const [index, item] of items.entries()) {
-      const details = await getDetails(item.title, omdbType);
+      const details = await getDetails(item, omdbType);
       if (details) {
         store.update((list) => {
           list[index].details = details;
