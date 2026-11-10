@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { shows, user } from "./stores.js";
+  import { shows, movies, user } from "./stores.js";
   import { getSession, deleteSession, createAuth } from "@tridnguyen/auth";
   import slugify from "@tridnguyen/slugify";
   import { SHEETS_API_URL, THIRDPARTY_API_URL } from "./config.js";
@@ -32,7 +32,21 @@
 
   getUserSession();
 
-  function getShowFromRow(row) {
+  const categories = {
+    shows: { label: "Shows", sheet: 0, omdbType: "series", store: shows },
+    movies: { label: "Movies", sheet: 1, omdbType: "movie", store: movies },
+  };
+
+  let category =
+    new URLSearchParams(window.location.search).get("type") === "movies"
+      ? "movies"
+      : "shows";
+  let spreadsheet;
+  const detailsLoaded = {};
+
+  $: list = categories[category].store;
+
+  function getItemFromRow(row) {
     return {
       title: row.cells[0],
       slug: slugify(row.cells[0]),
@@ -40,9 +54,9 @@
     };
   }
 
-  async function getShowDetails(title) {
+  async function getDetails(title, type) {
     const response = await fetch(
-      `${THIRDPARTY_API_URL}/omdb?type=series&title=${encodeURIComponent(
+      `${THIRDPARTY_API_URL}/omdb?type=${type}&title=${encodeURIComponent(
         title,
       )}`,
     ).then((r) => r.json());
@@ -52,29 +66,52 @@
     return response;
   }
 
-  onMount(async () => {
-    const resp = await fetch(
-      `${SHEETS_API_URL}/spreadsheets/${showsSSId}`,
-    ).then((r) => r.json());
-    // first row is the title, ignore it
-    shows.update((n) =>
-      n
-        .concat(resp.sheets[0].rows.slice(1).map(getShowFromRow))
-        .sort((showA, showB) => {
-          // sort from high to low
-          return showB.rating - showA.rating;
-        }),
-    );
+  async function loadCategory(key) {
+    if (!spreadsheet || detailsLoaded[key]) {
+      return;
+    }
+    detailsLoaded[key] = true;
+    const { sheet, omdbType, store } = categories[key];
+    const items = spreadsheet.sheets[sheet].rows
+      // first row is the title, ignore it
+      .slice(1)
+      .filter((row) => row.cells[0])
+      .map(getItemFromRow)
+      .sort((a, b) => {
+        // sort from high to low
+        return b.rating - a.rating;
+      });
+    store.set(items);
 
-    for (const [index, show] of $shows.entries()) {
-      let details = await getShowDetails(show.title);
+    for (const [index, item] of items.entries()) {
+      const details = await getDetails(item.title, omdbType);
       if (details) {
-        shows.update((n) => {
-          n[index].details = details;
-          return n;
+        store.update((list) => {
+          list[index].details = details;
+          return list;
         });
       }
     }
+  }
+
+  function selectCategory(key) {
+    category = key;
+    const url = new URL(window.location);
+    if (key === "shows") {
+      url.searchParams.delete("type");
+    } else {
+      url.searchParams.set("type", key);
+    }
+    url.hash = "";
+    history.replaceState(null, "", url);
+    loadCategory(key);
+  }
+
+  onMount(async () => {
+    spreadsheet = await fetch(
+      `${SHEETS_API_URL}/spreadsheets/${showsSSId}`,
+    ).then((r) => r.json());
+    loadCategory(category);
   });
 </script>
 
@@ -98,16 +135,28 @@
       </button>
     {/if}
   </div>
+  <ul class="uk-subnav uk-subnav-pill">
+    {#each Object.entries(categories) as [key, { label }]}
+      <li class:uk-active={category === key}>
+        <a
+          href="?type={key}"
+          on:click|preventDefault={() => selectCategory(key)}
+        >
+          {label}
+        </a>
+      </li>
+    {/each}
+  </ul>
   <table class="uk-table uk-table-striped">
     <thead>
       <tr>
-        <th>Shows</th>
+        <th>{categories[category].label}</th>
         <th>Plot</th>
         <th>Rating</th>
       </tr>
     </thead>
     <tbody>
-      {#each $shows as show}
+      {#each $list as show}
         <tr>
           <td class="show">
             <a href="#{show.slug}">
